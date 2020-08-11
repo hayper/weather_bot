@@ -55,6 +55,7 @@ pydotplus==2.0.2
 Pygments==2.6.1
 pylint==2.4.4
 pyparsing==2.4.7
+pypiwin32==223
 PyQt5==5.14.1
 PyQt5-sip==12.7.1
 pyrsistent==0.16.0
@@ -62,7 +63,7 @@ PySocks==1.7.1
 pyTelegramBotAPI==3.6.7
 python-dateutil==2.8.1
 pytz==2020.1
-pypiwin32==223
+pywin32==228
 pywinpty==0.5.7
 pyzmq==19.0.0
 requests==2.23.0
