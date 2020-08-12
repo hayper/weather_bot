@@ -50,7 +50,7 @@ class YWeather:
     
 
 Yandex_weather = YWeather('578a5be9-5d10-46bc-a072-b8814cd15a27')
-greet_bot = BotHandler('1365844037:AAEafCRD-rA25JQ7ynQduqSS-4ZQsvfW848')
+greet_bot = BotHandler('1211842153:AAHhY54IlyraxIHA0fTJKQEDmW9cSVUSFQI')
 greetings = ('здравствуйте', 'привет', 'ку', 'здорово')
 now = datetime.datetime.now()
 
