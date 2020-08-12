@@ -60,25 +60,25 @@ def main():
     today = now.day
     hour = now.hour
 
-    condition = {'clear': 'ясно',
-                'partly-cloudy': 'малооблачно',
-                'cloudy': 'облачно с прояснениями',
-                'overcast': 'пасмурно',
-                'drizzle': 'морось',
-                'light-rain': 'небольшой дождь',
-                'rain': 'дождь',
-                'moderate-rain': 'умеренно сильный дождь',
-                'heavy-rain': 'сильный дождь',
-                'continuous-heavy-rain': 'длительный сильный дождь',
-                'showers': 'ливень',
-                'wet-snow': 'дождь со снегом',
-                'light-snow': 'небольшой снег',
-                'snow': 'снег',
-                'snow-showers': 'снегопад',
-                'hail': 'град',
-                'thunderstorm': 'гроза',
-                'thunderstorm-with-rain': 'дождь с грозой',
-                'thunderstorm-with-hail': 'гроза с градом'}
+    condition = {'clear': '☀️ ясно',
+                'partly-cloudy': '🌤 малооблачно',
+                'cloudy': '⛅️ облачно с прояснениями',
+                'overcast': '☁️ пасмурно',
+                'drizzle': '🌦 морось',
+                'light-rain': '🌦 небольшой дождь',
+                'rain': '🌧 дождь',
+                'moderate-rain': '🌧 умеренно сильный дождь',
+                'heavy-rain': '🌧 сильный дождь',
+                'continuous-heavy-rain': '🌧 длительный сильный дождь',
+                'showers': '🌧 ливень',
+                'wet-snow': '🌨 дождь со снегом',
+                'light-snow': '🌨 небольшой снег',
+                'snow': '☃️ снег',
+                'snow-showers': '🌨 снегопад',
+                'hail': '🌨 град',
+                'thunderstorm': '🌩 гроза',
+                'thunderstorm-with-rain': '⛈ дождь с грозой',
+                'thunderstorm-with-hail': '⛈ гроза с градом'}
 
     wind_dir = {'nw':'северо-западное',
                 'n':'северное',
@@ -113,9 +113,9 @@ def main():
         
         if last_chat_text.lower() == "погода":
             weather = Yandex_weather.get_weather()
-            greet_bot.send_message(last_chat_id,  condition[weather['fact']['condition']] + '\n' + 'Температура ' + str(weather['fact']['temp']) + '°C' + '\n' +
-                                    'По ощущениям ' + str(weather['fact']['feels_like']) + '°C' + '\n' +'Скорость ветра ' + str(weather['fact']['wind_speed']) + ' м/с' + 
-                                    '\n' + ' направление ветра ' + wind_dir[weather['fact']['wind_dir']])
+            greet_bot.send_message(last_chat_id,  condition[weather['fact']['condition']] + '\n' + '🌡 Температура - ' + str(weather['fact']['temp']) + '°C' + '\n' +
+                                    '🌚 По ощущениям - ' + str(weather['fact']['feels_like']) + '°C' + '\n' +'🌬 Скорость ветра - ' + str(weather['fact']['wind_speed']) + ' м/с' + 
+                                    '\n' + '🧭 Направление ветра - ' + wind_dir[weather['fact']['wind_dir']])
 
         new_offset = last_update_id + 1
 
