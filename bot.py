@@ -1,11 +1,11 @@
 ﻿import requests
 import datetime
 from time import sleep
-import locale
+#import locale
 import json
 import os
 
-locale.setlocale(locale.LC_ALL, "ru")
+#locale.setlocale(locale.LC_ALL, "ru")
 
 class BotHandler:
 
