@@ -2,6 +2,8 @@
 import datetime
 from time import sleep
 import locale
+import json
+import os
 
 locale.setlocale(locale.LC_ALL, "ru")
 
@@ -57,50 +59,33 @@ greet_bot = BotHandler('1211842153:AAHhY54IlyraxIHA0fTJKQEDmW9cSVUSFQI')
 greetings = ('здравствуйте', 'привет', 'ку', 'здорово')
 now = datetime.datetime.now()
 
+with open(os.path.abspath('data.json'), encoding='utf-8') as data_json:
+    data = json.load(data_json)
+
+condition = data['condition']
+wind_dir = data['wind_dir']
+command_variants = data['command_variants']
+
+
 def getTemp(temp):
     if temp > 0:
         return '+' + str(temp)
     else:
         return str(temp)
 
+def getMessageForTimesOfDay(strTimesOfDay, TimesOfDay):
+    part_mess = (strTimesOfDay + '\n' + getTemp(TimesOfDay['temp_min']) + '°..' +  getTemp(TimesOfDay['temp_max']) + '°      ' +
+                condition[TimesOfDay['condition']] + '\n' +
+                ' ' * 10 + 'Давление  -  '+ str(TimesOfDay['pressure_mm']) + '  мм рт. ст.' + '\n' +
+                ' ' * 10 + 'Влажность  -  ' + str(TimesOfDay['humidity']) + '%' + '\n' +
+                ' ' * 10 + 'Ветер  -  ' + str(TimesOfDay['wind_speed']) + ' м/с ' + wind_dir[TimesOfDay['wind_dir']] + '\n' + 
+                ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(TimesOfDay['feels_like'])) + '°')
+    return part_mess
+
 def main():
     new_offset = None
     today = now.day
     hour = now.hour
-
-    condition = {'clear': '☀️ ясно',
-                'partly-cloudy': '🌤 малооблачно',
-                'cloudy': '⛅️ облачно с прояснениями',
-                'overcast': '☁️ пасмурно',
-                'drizzle': '🌦 морось',
-                'light-rain': '🌦 небольшой дождь',
-                'rain': '🌧 дождь',
-                'moderate-rain': '🌧 умеренно сильный дождь',
-                'heavy-rain': '🌧 сильный дождь',
-                'continuous-heavy-rain': '🌧 длительный сильный дождь',
-                'showers': '🌧 ливень',
-                'wet-snow': '🌨 дождь со снегом',
-                'light-snow': '🌨 небольшой снег',
-                'snow': '☃️ снег',
-                'snow-showers': '🌨 снегопад',
-                'hail': '🌨 град',
-                'thunderstorm': '🌩 гроза',
-                'thunderstorm-with-rain': '⛈ дождь с грозой',
-                'thunderstorm-with-hail': '⛈ гроза с градом'}
-
-    wind_dir = {'nw':'↘️ сз',
-                'n':'⬇️ с',
-                'ne':'↙️ св',
-                'e':'⬅️ в',
-                'se':'↖️ юв',
-                's':'⬆️ ю',
-                'sw':'↗️ юз',
-                'w':'➡️ з',
-                'с':'штиль'}
-
-    command_variants = ['погода', '/weather',
-                        'погода на сегодня', '/weatherfortoday',
-                        'погода на завтра', '/theweatherfortomorrow']
 
     while True:
         greet_bot.get_updates(new_offset)
@@ -144,35 +129,12 @@ def main():
                 evening = today_weather['evening']
                 night = tomorrow_weather['night']
                 str_dt = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(weather['forecasts'][0]['date_ts'] + 86400), "%A, %d %B")
+
                 message = (str_dt + '\n' +
-                            'Утро' + '\n' + getTemp(morning['temp_min']) + '°..' +  getTemp(morning['temp_max']) + '°      ' +
-                            condition[morning['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(morning['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(morning['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(morning['wind_speed']) + ' м/с ' + wind_dir[morning['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(morning['feels_like'])) + '°' + '\n' +
-
-                            'День' + '\n' + getTemp(day['temp_min']) + '°..' + getTemp(day['temp_max']) + '°      ' +
-                            condition[day['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(day['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(day['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(day['wind_speed']) + ' м/с ' + wind_dir[day['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(day['feels_like'])) + '°' + '\n' +
-
-                            'Вечер' + '\n' + getTemp(evening['temp_min']) + '°..' + getTemp(evening['temp_max']) + '°      ' +
-                            condition[evening['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(evening['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(evening['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(evening['wind_speed']) + ' м/с ' + wind_dir[evening['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(evening['feels_like'])) + '°' + '\n' +
-
-                            'Ночь' + '\n' + getTemp(night['temp_min']) + '°..' + getTemp(night['temp_max']) + '°      ' +
-                            condition[night['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(night['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(night['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(night['wind_speed']) + ' м/с ' + wind_dir[night['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(night['feels_like'])) + '°')
-
+                            getMessageForTimesOfDay('Утро', morning) + '\n' +
+                            getMessageForTimesOfDay('День', day) + '\n' +
+                            getMessageForTimesOfDay('Вечер', evening) + '\n' +
+                            getMessageForTimesOfDay('Ночь', day))
                 greet_bot.send_message(last_chat_id, message)
 
             elif last_chat_text.lower() == 'погода на завтра' or last_chat_text.lower() == '/theweatherfortomorrow':
@@ -181,35 +143,12 @@ def main():
                 evening = tomorrow_weather['evening']
                 night = day_after_tomorrow_weather['night']
                 str_dt = datetime.datetime.strftime(datetime.datetime.utcfromtimestamp(weather['forecasts'][1]['date_ts'] + 86400), "%A, %d %B")
+                
                 message = (weather['forecasts'][0]['date'] + '\n' +
-                            'Утро' + '\n' + getTemp(morning['temp_min']) + '°..' +  getTemp(morning['temp_max']) + '°      ' +
-                            condition[morning['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(morning['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(morning['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(morning['wind_speed']) + ' м/с ' + wind_dir[morning['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(morning['feels_like'])) + '°' + '\n' +
-
-                            'День' + '\n' + getTemp(day['temp_min']) + '°..' + getTemp(day['temp_max']) + '°      ' +
-                            condition[day['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(day['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(day['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(day['wind_speed']) + ' м/с ' + wind_dir[day['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(day['feels_like'])) + '°' + '\n' +
-
-                            'Вечер' + '\n' + getTemp(evening['temp_min']) + '°..' + getTemp(evening['temp_max']) + '°      ' +
-                            condition[evening['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(evening['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(evening['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(evening['wind_speed']) + ' м/с ' + wind_dir[evening['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(evening['feels_like'])) + '°' + '\n' +
-
-                            'Ночь' + '\n' + getTemp(night['temp_min']) + '°..' + getTemp(night['temp_max']) + '°      ' +
-                            condition[night['condition']] + '\n' +
-                            ' ' * 10 + 'Давление  -  '+ str(night['pressure_mm']) + '  мм рт. ст.' + '\n' +
-                            ' ' * 10 + 'Влажность  -  ' + str(night['humidity']) + '%' + '\n' +
-                            ' ' * 10 + 'Ветер  -  ' + str(night['wind_speed']) + ' м/с ' + wind_dir[night['wind_dir']] + '\n' + 
-                            ' ' * 10 + 'Ощущается как  -  ' + str(getTemp(night['feels_like'])) + '°')
-
+                            getMessageForTimesOfDay('Утро', morning) + '\n' +
+                            getMessageForTimesOfDay('День', day) + '\n' +
+                            getMessageForTimesOfDay('Вечер', evening) + '\n' +
+                            getMessageForTimesOfDay('Ночь', day))
                 greet_bot.send_message(last_chat_id, message)
 
         new_offset = last_update_id + 1
