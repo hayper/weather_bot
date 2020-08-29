@@ -58,7 +58,7 @@ class YWeather:
 
     
 
-Yandex_weather = YWeather('578a5be9-5d10-46bc-a072-b8814cd15a27')
+Yandex_weather = YWeather('a43190dd-a735-4625-9e06-ee7c12f55828')
 weather_bot = BotHandler('1211842153:AAFMBXKKfM6oaGAKx5VVwIknbGMCVkmhiXw')
 greetings = ('здравствуйте', 'привет', 'ку', 'здорово')
 now = datetime.datetime.now()
@@ -150,12 +150,21 @@ def main():
                 if user == None:
                     sql = "INSERT INTO users VALUES (?,?,?)"
                     cursor.execute(sql, (username, "0", "0"))
-                    conn.commit()    
-                weather_bot.send_message(last_chat_id, 'Добро пожаловать!', {"keyboard": [[{"text":"Отправить геолокацию 🗺", "request_location": True}]], "resize_keyboard": True})        
+                    conn.commit()
+                if today == now.day and 6 <= hour < 12:
+                    message = 'Доброе утро, {}'.format(last_chat_name) + "🌞"
+                if today == now.day and 12 <= hour < 17:
+                    message = 'Добрый день {}'.format(last_chat_name) + "🌞"
+                if today == now.day and 17 <= hour < 23:
+                    message = 'Добрый вечер, {}'.format(last_chat_name)+ "🌝"
+                if today == now.day and (hour > 23 or hour < 6):
+                    message = 'Доброй ночи, {}'.format(last_chat_name)+ "🌚"             
+                weather_bot.send_message(last_chat_id, message + '\nЯ могу отправлять погоду в соответствии с твоим местоположением, отправь мне свою геолокацию и начнем.',
+                 {"keyboard": [[{"text":"Отправить геолокацию 🗺", "request_location": True}]], "resize_keyboard": True})        
             if last_chat_text == 'Настройки ⚙️':
-                weather_bot.send_message(last_chat_id, "", {"keyboard": [[{"text":"Отправить геолокацию 🗺", "request_location": True}], [{"text": "Назад ↩️"}]], "resize_keyboard": True})
+                weather_bot.send_message(last_chat_id, "Доступные настройки", {"keyboard": [[{"text":"Отправить геолокацию 🗺", "request_location": True}], [{"text": "Назад ↩️"}]], "resize_keyboard": True})
             if last_chat_text == 'Назад ↩️':
-                weather_bot.send_message(last_chat_id, "Доступные команды." ,{"keyboard": [[{"text": "Погода сейчас ☀️"}], 
+                weather_bot.send_message(last_chat_id, "Доступные команды" ,{"keyboard": [[{"text": "Погода сейчас ☀️"}], 
                 [{"text": "Погода на день 🏞"}], [{"text": "Погода на завтра 🌄"}], [{"text": "Настройки ⚙️"}]], "resize_keyboard": True})    
             
             if last_chat_text.lower() in greetings and today == now.day and 6 <= hour < 12:
